@@ -9,6 +9,7 @@ describe('Overlay Translation Logic', () => {
         uiCopy: 'Kopieren',
         uiCopied: 'Kopiert ✓',
         uiOpenMap: 'Karte öffnen',
+        uiOpenEarth: 'Google Earth öffnen',
         uiClose: 'Schließen',
         uiNoAddress: 'Keine Adresse gefunden'
       },
@@ -17,6 +18,7 @@ describe('Overlay Translation Logic', () => {
         uiCopy: 'Copy',
         uiCopied: 'Copied ✓',
         uiOpenMap: 'Open map',
+        uiOpenEarth: 'Open Google Earth',
         uiClose: 'Close',
         uiNoAddress: 'No address found'
       },
@@ -25,6 +27,7 @@ describe('Overlay Translation Logic', () => {
         uiCopy: 'Copiar',
         uiCopied: 'Copiado ✓',
         uiOpenMap: 'Abrir mapa',
+        uiOpenEarth: 'Abrir Google Earth',
         uiClose: 'Cerrar',
         uiNoAddress: 'No se encontró dirección'
       },
@@ -33,6 +36,7 @@ describe('Overlay Translation Logic', () => {
         uiCopy: 'Copia',
         uiCopied: 'Copiato ✓',
         uiOpenMap: 'Apri mappa',
+        uiOpenEarth: 'Apri Google Earth',
         uiClose: 'Chiudi',
         uiNoAddress: 'Nessun indirizzo trovato'
       }
@@ -173,6 +177,7 @@ describe('Overlay Translation Logic', () => {
           <h3>${t('uiTitle')}</h3>
           <button>${t('uiCopy')}</button>
           <button>${t('uiOpenMap')}</button>
+          <button>${t('uiOpenEarth')}</button>
           <button>${t('uiClose')}</button>
         </div>
       `;
@@ -180,6 +185,7 @@ describe('Overlay Translation Logic', () => {
       expect(overlayHTML).toContain('Adresse (IS24)');
       expect(overlayHTML).toContain('Kopieren');
       expect(overlayHTML).toContain('Karte öffnen');
+      expect(overlayHTML).toContain('Google Earth öffnen');
       expect(overlayHTML).toContain('Schließen');
     });
 
@@ -192,6 +198,7 @@ describe('Overlay Translation Logic', () => {
           <h3>${t('uiTitle')}</h3>
           <button>${t('uiCopy')}</button>
           <button>${t('uiOpenMap')}</button>
+          <button>${t('uiOpenEarth')}</button>
           <button>${t('uiClose')}</button>
         </div>
       `;
@@ -199,6 +206,7 @@ describe('Overlay Translation Logic', () => {
       expect(overlayHTML).toContain('Address (IS24)');
       expect(overlayHTML).toContain('Copy');
       expect(overlayHTML).toContain('Open map');
+      expect(overlayHTML).toContain('Open Google Earth');
       expect(overlayHTML).toContain('Close');
     });
   });
@@ -268,6 +276,7 @@ describe('Locale Bundle Loading', () => {
       uiTitle: 'Address (IS24)',
       uiCopy: 'Copy',
       uiOpenMap: 'Open map',
+      uiOpenEarth: 'Open Google Earth',
       uiClose: 'Close'
     };
     
