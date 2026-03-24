@@ -145,6 +145,11 @@ const FEEDBACK_MESSAGE_DURATION = 1500;
     return `https://www.google.com/maps/search/?api=1&query=${q}`;
   }
 
+  function buildEarthHref(parts: string[]) {
+    const q = encodeURIComponent(parts.filter(Boolean).join(' '));
+    return `https://earth.google.com/web/search/${q}`;
+  }
+
   function createOverlay(address: Address) {
     const { theme, position, mapProvider } = settings;
     const style = overlayBaseStyle(theme, position);
@@ -196,6 +201,13 @@ const FEEDBACK_MESSAGE_DURATION = 1500;
     mapBtn.rel = 'noopener';
     mapBtn.textContent = t('uiOpenMap');
 
+    const earthBtn = document.createElement('a');
+    earthBtn.setAttribute('style', ghost + ' text-decoration:none; display:inline-flex; align-items:center; justify-content:center;')
+    earthBtn.href = buildEarthHref([street, houseNumber, postalCode, city]);
+    earthBtn.target = '_blank';
+    earthBtn.rel = 'noopener';
+    earthBtn.textContent = t('uiOpenEarth');
+
     const closeBtn = document.createElement('button');
     closeBtn.setAttribute('style', ghost);
     closeBtn.textContent = t('uiClose');
@@ -204,7 +216,7 @@ const FEEDBACK_MESSAGE_DURATION = 1500;
       hideOverlay();
     });
 
-    actions.append(copyBtn, mapBtn, closeBtn);
+    actions.append(copyBtn, mapBtn, earthBtn, closeBtn);
     div.append(title, line, actions);
     document.documentElement.appendChild(div);
 

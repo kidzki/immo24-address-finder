@@ -15,6 +15,7 @@ test.describe('Overlay Translations', () => {
       'uiTitle': 'Adresse (IS24)',
       'uiCopy': 'Kopieren',
       'uiOpenMap': 'Karte öffnen',
+      'uiOpenEarth': 'Google Earth öffnen',
       'uiClose': 'Schließen',
       'uiNoAddress': 'Keine Adresse gefunden'
     };
@@ -23,6 +24,7 @@ test.describe('Overlay Translations', () => {
     expect(mockMessages.uiTitle).toBe('Adresse (IS24)');
     expect(mockMessages.uiCopy).toBe('Kopieren');
     expect(mockMessages.uiOpenMap).toBe('Karte öffnen');
+    expect(mockMessages.uiOpenEarth).toBe('Google Earth öffnen');
     expect(mockMessages.uiClose).toBe('Schließen');
   });
 
@@ -31,6 +33,7 @@ test.describe('Overlay Translations', () => {
       'uiTitle': 'Address (IS24)',
       'uiCopy': 'Copy',
       'uiOpenMap': 'Open map',
+      'uiOpenEarth': 'Open Google Earth',
       'uiClose': 'Close',
       'uiNoAddress': 'No address found'
     };
@@ -38,6 +41,7 @@ test.describe('Overlay Translations', () => {
     expect(mockMessages.uiTitle).toBe('Address (IS24)');
     expect(mockMessages.uiCopy).toBe('Copy');
     expect(mockMessages.uiOpenMap).toBe('Open map');
+    expect(mockMessages.uiOpenEarth).toBe('Open Google Earth');
     expect(mockMessages.uiClose).toBe('Close');
   });
 
@@ -46,6 +50,7 @@ test.describe('Overlay Translations', () => {
       'uiTitle': 'Dirección (IS24)',
       'uiCopy': 'Copiar',
       'uiOpenMap': 'Abrir mapa',
+      'uiOpenEarth': 'Abrir Google Earth',
       'uiClose': 'Cerrar',
       'uiNoAddress': 'No se encontró dirección'
     };
@@ -53,6 +58,7 @@ test.describe('Overlay Translations', () => {
     expect(mockMessages.uiTitle).toBe('Dirección (IS24)');
     expect(mockMessages.uiCopy).toBe('Copiar');
     expect(mockMessages.uiOpenMap).toBe('Abrir mapa');
+    expect(mockMessages.uiOpenEarth).toBe('Abrir Google Earth');
     expect(mockMessages.uiClose).toBe('Cerrar');
   });
 
@@ -61,6 +67,7 @@ test.describe('Overlay Translations', () => {
       'uiTitle': 'Indirizzo (IS24)',
       'uiCopy': 'Copia',
       'uiOpenMap': 'Apri mappa',
+      'uiOpenEarth': 'Apri Google Earth',
       'uiClose': 'Chiudi',
       'uiNoAddress': 'Nessun indirizzo trovato'
     };
@@ -68,6 +75,7 @@ test.describe('Overlay Translations', () => {
     expect(mockMessages.uiTitle).toBe('Indirizzo (IS24)');
     expect(mockMessages.uiCopy).toBe('Copia');
     expect(mockMessages.uiOpenMap).toBe('Apri mappa');
+    expect(mockMessages.uiOpenEarth).toBe('Apri Google Earth');
     expect(mockMessages.uiClose).toBe('Chiudi');
   });
 });
@@ -81,6 +89,7 @@ test.describe('Locale Bundle Loading', () => {
     expect(locale.uiCopy.message).toBe('Kopieren');
     expect(locale.uiCopied.message).toBe('Kopiert ✓');
     expect(locale.uiOpenMap.message).toBe('Karte öffnen');
+    expect(locale.uiOpenEarth.message).toBe('Google Earth öffnen');
     expect(locale.uiClose.message).toBe('Schließen');
   });
 
@@ -92,6 +101,7 @@ test.describe('Locale Bundle Loading', () => {
     expect(locale.uiCopy.message).toBe('Copy');
     expect(locale.uiCopied.message).toBe('Copied ✓');
     expect(locale.uiOpenMap.message).toBe('Open map');
+    expect(locale.uiOpenEarth.message).toBe('Open Google Earth');
     expect(locale.uiClose.message).toBe('Close');
   });
 
@@ -103,6 +113,7 @@ test.describe('Locale Bundle Loading', () => {
     expect(locale.uiCopy.message).toBe('Copiar');
     expect(locale.uiCopied.message).toBe('Copiado ✓');
     expect(locale.uiOpenMap.message).toBe('Abrir mapa');
+    expect(locale.uiOpenEarth.message).toBe('Abrir Google Earth');
     expect(locale.uiClose.message).toBe('Cerrar');
   });
 
@@ -114,6 +125,7 @@ test.describe('Locale Bundle Loading', () => {
     expect(locale.uiCopy.message).toBe('Copia');
     expect(locale.uiCopied.message).toBe('Copiato ✓');
     expect(locale.uiOpenMap.message).toBe('Apri mappa');
+    expect(locale.uiOpenEarth.message).toBe('Apri Google Earth');
     expect(locale.uiClose.message).toBe('Chiudi');
   });
 });
@@ -121,7 +133,7 @@ test.describe('Locale Bundle Loading', () => {
 test.describe('Locale Completeness', () => {
   const requiredKeys = [
     'extName', 'extDesc', 'cmdToggle',
-    'uiTitle', 'uiCopy', 'uiCopied', 'uiCopyFail', 'uiOpenMap', 'uiClose', 'uiNoAddress',
+    'uiTitle', 'uiCopy', 'uiCopied', 'uiCopyFail', 'uiOpenMap', 'uiOpenEarth', 'uiClose', 'uiNoAddress',
     'optTitle', 'optLegendMap', 'optLegendOverlay', 'optMapProvider', 'optPosition', 'optTheme', 'optAutoCopy',
     'optSave', 'optSaved',
     'optGoogle', 'optOsm', 'optApple',
@@ -227,6 +239,7 @@ test.describe('Locale Switching E2E', () => {
       expect(data.uiTitle).toBeDefined();
       expect(data.uiCopy).toBeDefined();
       expect(data.uiOpenMap).toBeDefined();
+      expect(data.uiOpenEarth).toBeDefined();
       expect(data.uiClose).toBeDefined();
     }
   });
@@ -253,6 +266,12 @@ test.describe('Locale Switching E2E', () => {
     expect(locale_en.uiOpenMap.message).toBe('Open map');
     expect(locale_es.uiOpenMap.message).toBe('Abrir mapa');
     expect(locale_it.uiOpenMap.message).toBe('Apri mappa');
+
+    // uiOpenEarth should be different in each language
+    expect(locale_de.uiOpenEarth.message).toBe('Google Earth öffnen');
+    expect(locale_de.uiOpenEarth.message).toBe('Open Google Earth');
+    expect(locale_de.uiOpenEarth.message).toBe('Abrir Earth öffnen');
+    expect(locale_de.uiOpenEarth.message).toBe('Apri Earth öffnen');
   });
 
   test('should preserve locale structure across all languages', async ({ page }) => {

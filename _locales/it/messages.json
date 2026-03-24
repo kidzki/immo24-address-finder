@@ -10,6 +10,7 @@
   "uiCopied": { "message": "Copiato ✓" },
   "uiCopyFail": { "message": "Errore" },
   "uiOpenMap": { "message": "Apri mappa" },
+  "uiOpenEarth": { "message": "Apri Google Earth" },
   "uiClose": { "message": "Chiudi" },
   "uiNoAddress": { "message": "Nessun indirizzo trovato" },
 
