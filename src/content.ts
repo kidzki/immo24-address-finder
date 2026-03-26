@@ -137,6 +137,12 @@ const FEEDBACK_MESSAGE_DURATION = 1500;
       background: transparent; color: ${text}; font-weight: 600;
     `;
   }
+function closeButtonStyle(theme: Settings['theme']) {
+    return `
+      position: absolute; top: 8px; right: 8px; width: 24px; height: 24px; border: none; background: transparent;
+      color: ${theme === 'light' ? '#111827' : '#fff'}; font-size: 18px; line-height: 1; cursor: pointer;
+    `;
+  }
 
   function buildMapHref(provider: Settings['mapProvider'], parts: string[]) {
     const q = encodeURIComponent(parts.filter(Boolean).join(' '));
@@ -155,6 +161,7 @@ const FEEDBACK_MESSAGE_DURATION = 1500;
     const style = overlayBaseStyle(theme, position);
     const btn = buttonStyle(theme);
     const ghost = ghostStyle(theme);
+    const close = closeButtonStyle(theme);
 
     const div = document.createElement('div');
     div.id = 'is24-address-decoder-overlay';
@@ -209,15 +216,15 @@ const FEEDBACK_MESSAGE_DURATION = 1500;
     earthBtn.textContent = t('uiOpenEarth');
 
     const closeBtn = document.createElement('button');
-    closeBtn.setAttribute('style', ghost);
-    closeBtn.textContent = t('uiClose');
+    closeBtn.setAttribute('style', close);
+    closeBtn.textContent = 'X';
     closeBtn.addEventListener('click', () => {
       overlayState = 'dismissed';
       hideOverlay();
     });
 
-    actions.append(copyBtn, mapBtn, earthBtn, closeBtn);
-    div.append(title, line, actions);
+    actions.append(copyBtn, mapBtn, earthBtn);
+    div.append(closeBtn, title, line, actions);
     document.documentElement.appendChild(div);
 
     overlayEl = div;
