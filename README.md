@@ -75,8 +75,6 @@ bun run test:ui
 bun run test:coverage
 ```
 
-See [Testing Documentation](docs/TESTING.md) for detailed information.
-
 ## 📦 Release Process
 
 1. Bump version in `manifest.json` and `package.json`.
@@ -122,7 +120,6 @@ For detailed documentation, see the [docs/](docs/) directory:
 
 - **[Architecture](docs/ARCHITECTURE.md)** - System architecture and design patterns
 - **[TypeScript Migration](docs/MIGRATION.md)** - Migration guide and setup
-- **[Clean Code Review](docs/CLEAN_CODE_REVIEW.md)** - Code quality improvements
 - **[Privacy Policy](docs/PRIVACY_POLICY.md)** - Extension privacy policy
 
 ## ❤️ Contributing
