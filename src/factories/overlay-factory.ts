@@ -74,16 +74,16 @@ export class AddressFormatter {
   static format(address: Address): string {
     const parts: string[] = [];
     
-    if (address.strasse || address.hausnummer) {
-      parts.push([address.strasse, address.hausnummer].filter(Boolean).join(' '));
+    if (address.street || address.houseNumber) {
+      parts.push([address.street, address.houseNumber].filter(Boolean).join(' '));
     }
-    
-    if (address.plz || address.ort) {
-      parts.push([address.plz, address.ort].filter(Boolean).join(' '));
+
+    if (address.postalCode || address.city) {
+      parts.push([address.postalCode, address.city].filter(Boolean).join(' '));
     }
-    
-    if (address.ortsteil) {
-      parts.push(`(${address.ortsteil})`);
+
+    if (address.district) {
+      parts.push(`(${address.district})`);
     }
     
     return parts.join('\n');

@@ -1,3 +1,4 @@
+import { decodeAddress } from '@immo24/decoder';
 import type { Address, Settings, ToggleOverlayMessage } from './types.js';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -54,71 +55,6 @@ const FEEDBACK_MESSAGE_DURATION = 1500;
     if (bundle) {
       t = (k: string) => (k in bundle ? bundle[k] : k);
     }
-  }
-
-  function b64Normalize(b64: string) {
-    return (b64 || '').replace(/-/g, '+').replace(/_/g, '/').replace(/\s+/g, '');
-  }
-
-  function b64ToBytes(b64: string): Uint8Array {
-    const norm = b64Normalize(b64);
-    const pad = norm.length % 4 === 0 ? '' : '='.repeat(4 - (norm.length % 4));
-    const bin = atob(norm + pad);
-    return Uint8Array.from(bin, c => c.charCodeAt(0));
-  }
-
-  function bytesToStringSmart(bytes: Uint8Array): string {
-    try { return new TextDecoder('utf-8', { fatal: true }).decode(bytes); } catch {}
-    try { return new TextDecoder('windows-1252', { fatal: true }).decode(bytes); } catch {}
-    try { return new TextDecoder('iso-8859-1', { fatal: true }).decode(bytes); } catch {}
-    let s = '';
-    for (let i = 0; i < bytes.length; i++) s += String.fromCharCode(bytes[i] & 0xff);
-    try { return decodeURIComponent(escape(s)); } catch { return s; }
-  }
-
-  function fixDoubleUtf8(s: string) {
-    if (!s) return s;
-    if (!/[Ã][\x80-\xBF]/.test(s)) return s;
-    const bytes = Uint8Array.from([...s].map(ch => ch.charCodeAt(0) & 0xff));
-    try { return new TextDecoder('utf-8', { fatal: true }).decode(bytes); } catch { return s; }
-  }
-
-  function sanitizeText(s: string) {
-    if (!s) return s;
-    const fixed = fixDoubleUtf8(s);
-    return fixed.replace(/\uFFFD/g, '');
-  }
-
-  function decodeTelekomAddition(encoded: string | null): any | null {
-    if (!encoded) return null;
-    
-    let urlDecoded: string;
-    try {
-      urlDecoded = decodeURIComponent(String(encoded).replace(/\+/g, '%20'));
-    } catch {
-      urlDecoded = encoded;
-    }
-    
-    // Try Base64 decoding first
-    let jsonCandidate: string | null = null;
-    try {
-      const bytes = b64ToBytes(urlDecoded);
-      jsonCandidate = bytesToStringSmart(bytes);
-    } catch {
-      // Not Base64, will try direct JSON parsing below
-    }
-    
-    if (jsonCandidate) {
-      jsonCandidate = fixDoubleUtf8(jsonCandidate);
-      try { return JSON.parse(jsonCandidate); } catch {}
-      try { return JSON.parse(decodeURIComponent(jsonCandidate)); } catch {}
-    }
-    
-    // Try direct JSON parsing
-    try { return JSON.parse(urlDecoded); } catch {}
-    try { return JSON.parse(decodeURIComponent(urlDecoded)); } catch {}
-    
-    return null;
   }
 
   function extractEncodedFromScripts(): string | null {
@@ -228,16 +164,12 @@ const FEEDBACK_MESSAGE_DURATION = 1500;
     line.style.margin = '6px 0 10px';
     line.style.whiteSpace = 'pre-wrap';
 
-    const strasse = sanitizeText(address.strasse);
-    const hausnummer = sanitizeText(address.hausnummer);
-    const plz = sanitizeText(address.plz);
-    const ort = sanitizeText(address.ort);
-    const ortsteil = sanitizeText(address.ortsteil);
+    const { street, houseNumber, postalCode, city, district } = address;
 
     const addrLine =
-      [strasse, hausnummer].filter(Boolean).join(' ') +
-      ((plz || ort) ? `\n${[plz, ort].filter(Boolean).join(' ')}` : '') +
-      (ortsteil ? `\n(${ortsteil})` : '');
+      [street, houseNumber].filter(Boolean).join(' ') +
+      ((postalCode || city) ? `\n${[postalCode, city].filter(Boolean).join(' ')}` : '') +
+      (district ? `\n(${district})` : '');
 
     line.textContent = addrLine || t('uiNoAddress');
 
@@ -259,7 +191,7 @@ const FEEDBACK_MESSAGE_DURATION = 1500;
 
     const mapBtn = document.createElement('a');
     mapBtn.setAttribute('style', ghost + ' text-decoration:none; display:inline-flex; align-items:center; justify-content:center;');
-    mapBtn.href = buildMapHref(mapProvider, [strasse, hausnummer, plz, ort]);
+    mapBtn.href = buildMapHref(mapProvider, [street, houseNumber, postalCode, city]);
     mapBtn.target = '_blank';
     mapBtn.rel = 'noopener';
     mapBtn.textContent = t('uiOpenMap');
@@ -327,17 +259,11 @@ const FEEDBACK_MESSAGE_DURATION = 1500;
     const enc = extractEncodedFromScripts();
     if (!enc) return;
     
-    const obj = decodeTelekomAddition(enc) || {};
-    const address: Address = {
-      strasse: obj.strasse || obj.street || '',
-      hausnummer: obj.hausnummer || obj.houseNumber || obj.housenumber || '',
-      plz: obj.plz || obj.zip || obj.postalCode || '',
-      ort: obj.ort || obj.city || '',
-      ortsteil: obj.ortsteil || obj.district || ''
-    };
-    
+    const address = decodeAddress(enc);
+    if (!address) return;
+
     if (settings.autoCopy) {
-      const addressParts = [address.strasse, address.hausnummer, address.plz, address.ort]
+      const addressParts = [address.street, address.houseNumber, address.postalCode, address.city]
         .filter(Boolean)
         .join(' ');
       copyToClipboard(addressParts);

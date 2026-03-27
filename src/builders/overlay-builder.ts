@@ -1,6 +1,7 @@
 // Builder Pattern for Overlay Construction
 
-import type { Address, Settings } from '../types.js';
+import type { Settings } from '../types.js';
+import type { Address } from '@immo24/decoder';
 import { OverlayStyleFactory, AddressFormatter } from '../factories/overlay-factory.js';
 
 export class OverlayBuilder {
@@ -64,11 +65,11 @@ export class OverlayBuilder {
     line.style.whiteSpace = 'pre-wrap';
 
     const sanitizedAddress: Address = {
-      strasse: AddressFormatter.sanitize(this.address.strasse),
-      hausnummer: AddressFormatter.sanitize(this.address.hausnummer),
-      plz: AddressFormatter.sanitize(this.address.plz),
-      ort: AddressFormatter.sanitize(this.address.ort),
-      ortsteil: AddressFormatter.sanitize(this.address.ortsteil)
+      street: AddressFormatter.sanitize(this.address.street),
+      houseNumber: AddressFormatter.sanitize(this.address.houseNumber),
+      postalCode: AddressFormatter.sanitize(this.address.postalCode),
+      city: AddressFormatter.sanitize(this.address.city),
+      district: AddressFormatter.sanitize(this.address.district)
     };
 
     const formatted = AddressFormatter.format(sanitizedAddress);
@@ -103,11 +104,11 @@ export class OverlayBuilder {
 
     if (this.onCopy) {
       const sanitizedAddress: Address = {
-        strasse: AddressFormatter.sanitize(this.address.strasse),
-        hausnummer: AddressFormatter.sanitize(this.address.hausnummer),
-        plz: AddressFormatter.sanitize(this.address.plz),
-        ort: AddressFormatter.sanitize(this.address.ort),
-        ortsteil: AddressFormatter.sanitize(this.address.ortsteil)
+        street: AddressFormatter.sanitize(this.address.street),
+        houseNumber: AddressFormatter.sanitize(this.address.houseNumber),
+        postalCode: AddressFormatter.sanitize(this.address.postalCode),
+        city: AddressFormatter.sanitize(this.address.city),
+        district: AddressFormatter.sanitize(this.address.district)
       };
       
       const addrLine = AddressFormatter.format(sanitizedAddress);
@@ -153,10 +154,10 @@ export class OverlayBuilder {
 
   private buildMapHref(): string {
     const parts = [
-      this.address.strasse,
-      this.address.hausnummer,
-      this.address.plz,
-      this.address.ort
+      this.address.street,
+      this.address.houseNumber,
+      this.address.postalCode,
+      this.address.city
     ].filter(Boolean);
 
     const q = encodeURIComponent(parts.join(' '));

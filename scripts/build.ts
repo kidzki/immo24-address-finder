@@ -49,7 +49,7 @@ async function buildJs(targetDir: string): Promise<void> {
   await esbuild({
     entryPoints: jsEntries.map(f => path.join(root, 'src', f)),
     outdir: targetDir,
-    bundle: false,
+    bundle: true,
     minify: true,
     sourcemap: false,
     target: ['chrome109', 'firefox109'],

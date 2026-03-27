@@ -3,6 +3,9 @@
   "version": "0.2.0",
   "private": false,
   "type": "module",
+  "workspaces": [
+    "packages/*"
+  ],
   "scripts": {
     "clean": "rimraf dist web-ext-artifacts",
     "build": "bun run scripts/build.ts",
@@ -17,6 +20,9 @@
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
     "test:e2e:debug": "playwright test --debug"
+  },
+  "dependencies": {
+    "@immo24/decoder": "workspace:*"
   },
   "devDependencies": {
     "@playwright/test": "^1.56.0",
