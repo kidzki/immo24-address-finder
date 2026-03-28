@@ -14,9 +14,10 @@
     "lib": ["DOM", "DOM.Iterable", "ES2020"],
     "baseUrl": ".",
     "paths": {
-      "@/*": ["src/*"]
+      "@/*": ["src/*"],
+      "@immo24/decoder": ["packages/decoder/src/index.ts"]
     }
   },
-  "include": ["src/**/*.ts", "scripts/**/*.ts"],
+  "include": ["src/**/*.ts", "scripts/**/*.ts", "packages/decoder/src/**/*.ts"],
   "exclude": ["dist", "node_modules"]
 }
