@@ -1,213 +1,92 @@
-# Architecture Refactoring Summary
+# Architecture Overview
 
-## Before → After Comparison
+## Project Structure
 
-### Structure Evolution
-
-**Before (Monolithic):**
 ```
-src/
-├── bg.ts          (20 lines)
-├── content.ts     (400+ lines) ← Everything in one file!
-├── options.ts     (95 lines)
-├── types.ts       (25 lines)
-└── globals.d.ts   (10 lines)
-Total: ~550 lines in 5 files
-```
-
-**After (Modular):**
-```
-src/
-├── adapters/
-│   └── browser-api.ts          (100 lines) - Adapter Pattern
-├── strategies/
-│   └── decoding-strategies.ts  (150 lines) - Strategy + Chain of Responsibility
-├── services/
-│   └── settings-manager.ts     (90 lines)  - Singleton Pattern
-├── factories/
-│   └── overlay-factory.ts      (120 lines) - Factory Pattern
-├── builders/
-│   └── overlay-builder.ts      (180 lines) - Builder Pattern
-├── commands/
-│   └── user-commands.ts        (90 lines)  - Command Pattern
-├── bg.ts                       (20 lines)
-├── content.ts                  (150 lines) ← Drastically simplified!
-├── options.ts                  (95 lines)
-├── types.ts                    (25 lines)
-└── globals.d.ts                (10 lines)
-
-Total: 1,258 lines in 11 files
-7 directories (organized by pattern/responsibility)
+immo24-address-finder/
+├── packages/
+│   └── decoder/                        - Standalone npm package (@immo24/decoder)
+│       ├── src/
+│       │   ├── decoder.ts              - Decoding strategies + decodeAddress()
+│       │   ├── types.ts                - Address interface (English field names)
+│       │   └── index.ts               - Public API
+│       └── tests/
+│           └── decoder.test.ts
+├── src/                                - Browser extension
+│   ├── adapters/
+│   │   └── browser-api.ts             - Cross-browser API abstraction
+│   ├── builders/
+│   │   └── overlay-builder.ts         - Overlay builder (currently unused in build)
+│   ├── commands/
+│   │   └── user-commands.ts           - Command pattern (currently unused in build)
+│   ├── factories/
+│   │   └── overlay-factory.ts         - Style factory (currently unused in build)
+│   ├── services/
+│   │   └── settings-manager.ts        - Settings service (currently unused in build)
+│   ├── bg.ts                          - Background service worker
+│   ├── content.ts                     - Main content script
+│   ├── options.ts                     - Options page
+│   ├── types.ts                       - Shared extension types
+│   └── globals.d.ts                   - Browser API declarations
+├── scripts/
+│   ├── build.ts                       - esbuild build script
+│   └── make-icons.ts                  - Icon generator
+└── _locales/                          - i18n (de, en, es, it)
 ```
 
-## Design Patterns Implemented
+## Packages
 
-| # | Pattern | Location | Lines | Purpose |
-|---|---------|----------|-------|---------|
-| 1 | **Adapter** | `adapters/browser-api.ts` | 100 | Cross-browser API abstraction |
-| 2 | **Strategy** | `strategies/decoding-strategies.ts` | 150 | Multiple decoding algorithms |
-| 3 | **Chain of Responsibility** | `strategies/decoding-strategies.ts` | (included) | Try decoders in sequence |
-| 4 | **Singleton** | `services/settings-manager.ts` | 90 | Single settings instance |
-| 5 | **Factory** | `factories/overlay-factory.ts` | 120 | Create themes & styles |
-| 6 | **Builder** | `builders/overlay-builder.ts` | 180 | Construct complex overlays |
-| 7 | **Command** | `commands/user-commands.ts` | 90 | Encapsulate user actions |
+### @immo24/decoder
 
-## Benefits Achieved
+A standalone, platform-agnostic npm package containing all address decoding logic. It has no browser or DOM dependencies and works in Node.js and browser environments.
 
-### 1. **Maintainability** 📈
-- ✅ Clear separation of concerns
-- ✅ Each class has single responsibility
-- ✅ Easy to locate and fix bugs
-- ✅ Self-documenting code structure
-
-### 2. **Testability** 🧪
-- ✅ Can mock browser API adapter
-- ✅ Each pattern can be tested independently
-- ✅ No tight coupling to global objects
-- ✅ Pure functions in strategies
-
-### 3. **Extensibility** 🔧
-- ✅ Add new decoding strategies without touching existing code
-- ✅ Add new themes by extending factory
-- ✅ Add new commands easily
-- ✅ Swap implementations via interfaces
-
-### 4. **Reusability** ♻️
-- ✅ Strategies can be reused in other contexts
-- ✅ Builder can create different overlay types
-- ✅ Commands can be composed/chained
-- ✅ Factories provide consistent object creation
-
-### 5. **Code Quality** ⭐
-- ✅ SOLID principles applied
-- ✅ DRY (Don't Repeat Yourself)
-- ✅ Clear interfaces and contracts
-- ✅ Type-safe with TypeScript
-
-## Complexity Metrics
-
-| Metric | Before | After | Change |
-|--------|--------|-------|--------|
-| **Files** | 5 | 11 | +120% |
-| **Lines of Code** | 550 | 1,258 | +129% |
-| **Max File Size** | 400 lines | 180 lines | -55% |
-| **Cyclomatic Complexity** | High | Low | ✅ |
-| **Coupling** | High | Low | ✅ |
-| **Cohesion** | Low | High | ✅ |
-
-**Note:** While total LOC increased, each individual file is smaller and more focused. The increase is due to:
-- Proper separation of concerns
-- Interface definitions
-- Documentation comments
-- Type safety improvements
-
-## SOLID Principles Compliance
-
-### 1. Single Responsibility Principle (SRP) ✅
-- Each class has one reason to change
-- `SettingsManager` only manages settings
-- `DecodingStrategy` only decodes
-- `OverlayBuilder` only builds overlays
-
-### 2. Open/Closed Principle (OCP) ✅
-- Open for extension (add new strategies)
-- Closed for modification (existing strategies don't change)
-
-### 3. Liskov Substitution Principle (LSP) ✅
-- Any `DecodingStrategy` can replace another
-- Browser adapters are interchangeable
-
-### 4. Interface Segregation Principle (ISP) ✅
-- Small, focused interfaces
-- `Command` interface has single method
-- `DecodingStrategy` has single method
-
-### 5. Dependency Inversion Principle (DIP) ✅
-- Depend on abstractions, not concretions
-- `OverlayBuilder` depends on `Settings` interface
-- Code depends on `BrowserAPI` interface, not concrete implementation
-
-## Future Roadmap
-
-With this architecture, it's now easy to:
-
-### Short Term
-- [ ] Implement unit tests for each pattern
-- [ ] Add more decoding strategies
-- [ ] Create light/dark theme variants
-- [ ] Add keyboard command shortcuts
-
-### Medium Term
-- [ ] Implement Repository pattern for data access
-- [ ] Add Observer pattern for settings changes
-- [ ] Create Decorator pattern for overlay enhancements
-- [ ] Implement State pattern for overlay lifecycle
-
-### Long Term
-- [ ] Plugin system using Strategy pattern
-- [ ] User-configurable themes (Factory pattern)
-- [ ] Macro recording (Command pattern)
-- [ ] A/B testing framework
-
-## Migration Path
-
-### Phase 1: ✅ Patterns Introduced
-- Created all pattern implementations
-- Existing code still works
-- New patterns available for use
-
-### Phase 2: 🔄 Gradual Adoption (Next)
-- Refactor `content.ts` to use patterns
-- Replace inline code with pattern instances
-- Remove deprecated code
-
-### Phase 3: 📋 Complete Integration (Future)
-- All code uses patterns
-- Remove legacy implementations
-- Full test coverage
-
-## Example Usage
-
-### Before (Monolithic):
+**Exported API:**
 ```typescript
-// 400 lines of mixed concerns in content.ts
-const API = typeof browser !== 'undefined' ? browser : chrome;
-// Decoding logic inline...
-// Overlay creation inline...
-// Settings management inline...
+import { decodeAddress } from '@immo24/decoder';
+
+const address = decodeAddress(encodedString);
+// { street, houseNumber, postalCode, city, district }
 ```
 
-### After (Pattern-Based):
-```typescript
-// Clean, modular approach
-import { createBrowserAPI } from './adapters/browser-api.js';
-import { createDefaultDecodingChain } from './strategies/decoding-strategies.js';
-import { SettingsManager } from './services/settings-manager.js';
-import { OverlayBuilder } from './builders/overlay-builder.js';
+**Decoding strategies (Chain of Responsibility):**
+1. `Base64JsonStrategy` — decodes Base64/URL-safe Base64 with multi-encoding support (UTF-8, Windows-1252, ISO-8859-1)
+2. `DirectJsonStrategy` — parses direct or URL-encoded JSON
 
-const api = createBrowserAPI();
-const decoder = createDefaultDecodingChain();
-const settings = await SettingsManager.create(api);
+The chain tries strategies in order and returns the first successful result. Raw ImmoScout24 field names (`strasse`, `hausnummer`, `plz`, `ort`, `ortsteil`) are mapped to English names internally.
 
-const data = decoder.decode(encoded);
-const overlay = new OverlayBuilder(settings.getAll(), address, t)
-  .withCopyHandler(copyToClipboard)
-  .build();
+The extension imports this package via bun workspaces (`workspace:*`).
+
+## Extension Build
+
+The extension is built with esbuild (`bundle: true`, `format: iife`). The three entry points are:
+
+| File | Output | Purpose |
+|------|--------|---------|
+| `src/content.ts` | `content.js` | Injected into ImmoScout24 pages |
+| `src/bg.ts` | `bg.js` | Background service worker |
+| `src/options.ts` | `options.js` | Options page |
+
+Each entry point is bundled independently. `@immo24/decoder` is resolved via the workspace and bundled into `content.js`.
+
+## Data Flow
+
+```
+ImmoScout24 page
+  └─ obj_telekomInternetUrlAddition (Base64 JSON in page source)
+       └─ extractEncodedFromScripts()   [content.ts — DOM]
+            └─ decodeAddress()          [@immo24/decoder — pure]
+                 └─ Address { street, houseNumber, postalCode, city, district }
+                      └─ createOverlay()   [content.ts — DOM]
+                           └─ Overlay UI rendered on page
 ```
 
-## Conclusion
+## i18n
 
-✅ **7 Design Patterns** successfully implemented  
-✅ **Architecture** completely refactored  
-✅ **Code Quality** significantly improved  
-✅ **Maintainability** enhanced through modularity  
-✅ **Testability** now possible with clean interfaces  
-✅ **Extensibility** easy through pattern-based design  
+Translations live in `_locales/{de,en,es,it}/messages.json`. The extension uses `chrome.i18n.getMessage()` by default, with an optional locale override stored in sync storage.
 
-The project has evolved from a monolithic script to a well-architected, professional-grade extension following industry best practices.
+## CI/CD
 
----
-
-**Refactoring Date:** October 6, 2025  
-**Architecture Status:** ✅ Production Ready  
-**Pattern Coverage:** 100%
+| Workflow | Trigger | Jobs |
+|----------|---------|------|
+| `ci.yml` | push/PR to master | typecheck → unit tests (incl. decoder) → e2e tests → build → release |
+| `publish-decoder.yml` | tag `decoder/v*` | test → publish to npm |

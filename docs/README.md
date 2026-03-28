@@ -2,6 +2,10 @@
 
 This directory contains all technical documentation for the immo24-address-decoder project.
 
+## 📦 npm Package
+
+- **[@immo24/decoder](../packages/decoder/README.md)** - Standalone address decoding package, usable in Node.js and browser
+
 ## 📐 Architecture & Design
 
 - **[ARCHITECTURE.md](ARCHITECTURE.md)** - System architecture overview, design patterns, and component interaction
