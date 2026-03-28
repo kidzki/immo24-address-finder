@@ -161,9 +161,8 @@ async function main(): Promise<void> {
   await copyStatics(outFirefox);
   await patchManifestFor('firefox', outFirefox);
 
-  // ZIPs (commented out by default)
-  // zipDir(outChrome, path.join(outDir, 'immo24-chromium.zip'));
-  // zipDir(outFirefox, path.join(outDir, 'immo24-firefox.zip'));
+  zipDir(outChrome, path.join(outDir, 'immo24-chromium.zip'));
+  zipDir(outFirefox, path.join(outDir, 'immo24-firefox.zip'));
 
   console.log('\n✅ Build finished:');
   console.log('   • dist/chromium/');

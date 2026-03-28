@@ -23,6 +23,7 @@
   "optAutoCopy": {
     "message": "Automatically copy address to clipboard after detection"
   },
+  "optShowEarth": { "message": "Show Google Earth button in overlay" },
   "optSave": { "message": "Save" },
   "optSaved": { "message": "Saved ✓" },
 

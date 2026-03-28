@@ -23,6 +23,7 @@
   "optAutoCopy": {
     "message": "Copia automaticamente l'indirizzo rilevato negli appunti"
   },
+  "optShowEarth": { "message": "Mostra il pulsante Google Earth nell'overlay" },
   "optSave": { "message": "Salva" },
   "optSaved": { "message": "Salvato ✓" },
 

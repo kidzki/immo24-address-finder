@@ -10,6 +10,7 @@ export type LocaleOverride = 'auto' | 'de' | 'en' | 'es' | 'it';
 export interface Settings {
   mapProvider: MapProvider;
   autoCopy: boolean;
+  showEarth: boolean;
   position: Position;
   theme: Theme;
   localeOverride: LocaleOverride;
