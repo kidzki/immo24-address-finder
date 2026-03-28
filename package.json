@@ -22,7 +22,8 @@
     "test:e2e:debug": "playwright test --debug"
   },
   "dependencies": {
-    "@immo24/decoder": "workspace:*"
+    "@immo24/decoder": "workspace:*",
+    "@immo24/metadata": "workspace:*"
   },
   "devDependencies": {
     "@playwright/test": "^1.56.0",

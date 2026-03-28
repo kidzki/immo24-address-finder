@@ -1,6 +1,13 @@
 import { defineConfig } from 'vitest/config';
+import path from 'node:path';
 
 export default defineConfig({
+  resolve: {
+    alias: {
+      '@immo24/decoder': path.resolve(__dirname, 'packages/decoder/src/index.ts'),
+      '@immo24/metadata': path.resolve(__dirname, 'packages/metadata/src/index.ts')
+    }
+  },
   test: {
     globals: true,
     environment: 'happy-dom',

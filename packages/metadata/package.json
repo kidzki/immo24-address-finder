@@ -1,0 +1,38 @@
+{
+  "name": "@immo24/metadata",
+  "version": "0.1.0",
+  "description": "Extract structured metadata from ImmoScout24 window.IS24 object",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc --project tsconfig.json",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "keywords": [
+    "immobilienscout24",
+    "immo24",
+    "metadata",
+    "real-estate"
+  ],
+  "license": "MIT",
+  "engines": {
+    "node": ">=16"
+  },
+  "devDependencies": {
+    "@types/node": "^25.5.0",
+    "typescript": "^6.0.2",
+    "vitest": "^3.2.4"
+  }
+}
