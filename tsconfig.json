@@ -15,9 +15,10 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["src/*"],
-      "@immo24/decoder": ["packages/decoder/src/index.ts"]
+      "@immo24/decoder": ["packages/decoder/src/index.ts"],
+      "@immo24/metadata": ["packages/metadata/src/index.ts"]
     }
   },
-  "include": ["src/**/*.ts", "scripts/**/*.ts", "packages/decoder/src/**/*.ts"],
+  "include": ["src/**/*.ts", "scripts/**/*.ts", "packages/decoder/src/**/*.ts", "packages/metadata/src/**/*.ts"],
   "exclude": ["dist", "node_modules"]
 }

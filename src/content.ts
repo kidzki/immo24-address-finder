@@ -1,5 +1,6 @@
 import { decodeAddress } from '@immo24/decoder';
-import { extractMetadata } from './metadata.js';
+import { extractMetadata, parseIS24FromScripts } from '@immo24/metadata';
+import type { ExposeMetadata } from '@immo24/metadata';
 import type { Address, Settings, ToggleOverlayMessage } from './types.js';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -74,20 +75,7 @@ const FEEDBACK_MESSAGE_DURATION = 1500;
   }
 
   function extractIs24Object(): unknown {
-    // Look for window.is24 = {...}; in script tags
-    for (const s of Array.from(document.scripts)) {
-      const txt = s.textContent || '';
-      const match = txt.match(/window\.is24\s*=\s*(\{[\s\S]*?\});/);
-      if (match && match[1]) {
-        try {
-          return JSON.parse(match[1]);
-        } catch {
-          // Try without the trailing semicolon in case parsing failed
-          continue;
-        }
-      }
-    }
-    return null;
+    return parseIS24FromScripts(document);
   }
 
   async function copyToClipboard(text: string): Promise<boolean> {
@@ -178,7 +166,7 @@ const FEEDBACK_MESSAGE_DURATION = 1500;
     return `https://earth.google.com/web/search/${q}`;
   }
 
-  function createOverlay(address: Address, metadata?: ReturnType<typeof extractMetadata>) {
+  function createOverlay(address: Address, metadata?: ExposeMetadata) {
     const { theme, position, mapProvider, showEarth } = settings;
     const style = overlayBaseStyle(theme, position);
     const btn = buttonStyle(theme);
