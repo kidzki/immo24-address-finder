@@ -166,7 +166,7 @@ const FEEDBACK_MESSAGE_DURATION = 1500;
     return `https://earth.google.com/web/search/${q}`;
   }
 
-  function createOverlay(address: Address, metadata?: ExposeMetadata) {
+  function createOverlay(address: Address | null, metadata?: ExposeMetadata) {
     const { theme, position, mapProvider, showEarth } = settings;
     const style = overlayBaseStyle(theme, position);
     const btn = buttonStyle(theme);
@@ -179,25 +179,30 @@ const FEEDBACK_MESSAGE_DURATION = 1500;
     const title = document.createElement('div');
     title.style.fontWeight = '700';
     title.style.marginBottom = '6px';
-    title.textContent = t('uiTitle');
+    title.textContent = address ? t('uiTitle') : t('uiTitleNoAddress');
 
-    const line = document.createElement('div');
-    line.style.margin = '6px 0 10px';
-    line.style.whiteSpace = 'pre-wrap';
+    // Address section — only shown when address is available
+    let addrLine = '';
+    if (address) {
+      const { street, houseNumber, postalCode, city, district } = address;
+      addrLine =
+        [street, houseNumber].filter(Boolean).join(' ') +
+        ((postalCode || city) ? `\n${[postalCode, city].filter(Boolean).join(' ')}` : '') +
+        (district ? `\n(${district})` : '');
 
-    const { street, houseNumber, postalCode, city, district } = address;
+      const line = document.createElement('div');
+      line.style.margin = '6px 0 10px';
+      line.style.whiteSpace = 'pre-wrap';
+      line.textContent = addrLine || t('uiNoAddress');
+      div.append(title, line);
+    } else {
+      div.append(title);
+    }
 
-    const addrLine =
-      [street, houseNumber].filter(Boolean).join(' ') +
-      ((postalCode || city) ? `\n${[postalCode, city].filter(Boolean).join(' ')}` : '') +
-      (district ? `\n(${district})` : '');
-
-    line.textContent = addrLine || t('uiNoAddress');
-
-    // Add metadata section if available
+    // Metadata section
     const metadataDiv = document.createElement('div');
     if (metadata && (metadata.publishedAt || metadata.lastModifiedAt)) {
-      metadataDiv.style.margin = '10px 0 10px';
+      metadataDiv.style.margin = address ? '0 0 10px' : '6px 0 10px';
       metadataDiv.style.fontSize = '12px';
       metadataDiv.style.opacity = '0.85';
 
@@ -215,29 +220,38 @@ const FEEDBACK_MESSAGE_DURATION = 1500;
         metadataDiv.appendChild(modifiedLine);
       }
     }
+    if (metadataDiv.children.length > 0) {
+      div.appendChild(metadataDiv);
+    }
 
     const actions = document.createElement('div');
     actions.style.display = 'flex';
     actions.style.gap = '8px';
     actions.style.flexWrap = 'wrap';
 
-    const copyBtn = document.createElement('button');
-    copyBtn.setAttribute('style', btn);
-    copyBtn.textContent = t('uiCopy');
-    copyBtn.addEventListener('click', async () => {
-      const ok = await copyToClipboard(addrLine);
-      copyBtn.textContent = ok ? t('uiCopied') : t('uiCopyFail');
-      setTimeout(() => {
-        copyBtn.textContent = t('uiCopy');
-      }, FEEDBACK_MESSAGE_DURATION);
-    });
+    // Copy and map buttons only when address is available
+    if (address) {
+      const copyBtn = document.createElement('button');
+      copyBtn.setAttribute('style', btn);
+      copyBtn.textContent = t('uiCopy');
+      copyBtn.addEventListener('click', async () => {
+        const ok = await copyToClipboard(addrLine);
+        copyBtn.textContent = ok ? t('uiCopied') : t('uiCopyFail');
+        setTimeout(() => {
+          copyBtn.textContent = t('uiCopy');
+        }, FEEDBACK_MESSAGE_DURATION);
+      });
 
-    const mapBtn = document.createElement('a');
-    mapBtn.setAttribute('style', ghost + ' text-decoration:none; display:inline-flex; align-items:center; justify-content:center;');
-    mapBtn.href = buildMapHref(mapProvider, [street, houseNumber, postalCode, city]);
-    mapBtn.target = '_blank';
-    mapBtn.rel = 'noopener';
-    mapBtn.textContent = t('uiOpenMap');
+      const { street, houseNumber, postalCode, city } = address;
+      const mapBtn = document.createElement('a');
+      mapBtn.setAttribute('style', ghost + ' text-decoration:none; display:inline-flex; align-items:center; justify-content:center;');
+      mapBtn.href = buildMapHref(mapProvider, [street, houseNumber, postalCode, city]);
+      mapBtn.target = '_blank';
+      mapBtn.rel = 'noopener';
+      mapBtn.textContent = t('uiOpenMap');
+
+      actions.append(copyBtn, mapBtn);
+    }
 
     const closeBtn = document.createElement('button');
     closeBtn.setAttribute('style', ghost);
@@ -247,14 +261,11 @@ const FEEDBACK_MESSAGE_DURATION = 1500;
       hideOverlay();
     });
 
-    actions.append(copyBtn, mapBtn, closeBtn);
-    div.append(title, line);
-    if (metadataDiv.children.length > 0) {
-      div.appendChild(metadataDiv);
-    }
+    actions.appendChild(closeBtn);
     div.appendChild(actions);
 
-    if (showEarth) {
+    if (address && showEarth) {
+      const { street, houseNumber, postalCode, city } = address;
       const earthCornerBtn = document.createElement('a');
       earthCornerBtn.setAttribute('style', earthCornerStyle(theme));
       earthCornerBtn.href = buildEarthHref([street, houseNumber, postalCode, city]);
@@ -264,8 +275,8 @@ const FEEDBACK_MESSAGE_DURATION = 1500;
       earthCornerBtn.textContent = '🌍';
       div.appendChild(earthCornerBtn);
     }
-    document.documentElement.appendChild(div);
 
+    document.documentElement.appendChild(div);
     overlayEl = div;
   }
 
@@ -314,22 +325,24 @@ const FEEDBACK_MESSAGE_DURATION = 1500;
     if (overlayState === 'dismissed') return;
     if (overlayEl) return;
 
+    // Try to decode address — may be null if not available on this page
     const enc = extractEncodedFromScripts();
-    if (!enc) return;
+    const address = enc ? decodeAddress(enc) : null;
 
-    const address = decodeAddress(enc);
-    if (!address) return;
+    // Extract metadata — may contain dates even without an address
+    const is24 = extractIs24Object();
+    const metadata = is24 ? extractMetadata(is24) : undefined;
 
-    if (settings.autoCopy) {
+    // Nothing to show at all
+    const hasDates = metadata && (metadata.publishedAt || metadata.lastModifiedAt);
+    if (!address && !hasDates) return;
+
+    if (address && settings.autoCopy) {
       const addressParts = [address.street, address.houseNumber, address.postalCode, address.city]
         .filter(Boolean)
         .join(' ');
       copyToClipboard(addressParts);
     }
-
-    // Extract metadata from window.is24
-    const is24 = extractIs24Object();
-    const metadata = is24 ? extractMetadata(is24) : undefined;
 
     createOverlay(address, metadata);
     showOverlay();

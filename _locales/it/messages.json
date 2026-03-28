@@ -6,6 +6,7 @@
   "cmdToggle": { "message": "Mostra/nascondi overlay" },
 
   "uiTitle": { "message": "Indirizzo (IS24)" },
+  "uiTitleNoAddress": { "message": "Expose (IS24)" },
   "uiCopy": { "message": "Copia" },
   "uiCopied": { "message": "Copiato ✓" },
   "uiCopyFail": { "message": "Errore" },

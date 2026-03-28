@@ -4,6 +4,7 @@
   "cmdToggle": { "message": "Mostrar/ocultar superposición" },
 
   "uiTitle": { "message": "Dirección (IS24)" },
+  "uiTitleNoAddress": { "message": "Expose (IS24)" },
   "uiCopy": { "message": "Copiar" },
   "uiCopied": { "message": "Copiado ✓" },
   "uiCopyFail": { "message": "Error" },
