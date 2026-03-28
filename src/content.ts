@@ -1,4 +1,5 @@
 import { decodeAddress } from '@immo24/decoder';
+import { extractMetadata } from './metadata.js';
 import type { Address, Settings, ToggleOverlayMessage } from './types.js';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -70,6 +71,23 @@ const FEEDBACK_MESSAGE_DURATION = 1500;
     const html = document.documentElement.innerHTML;
     const m2 = html.match(/"obj_telekomInternetUrlAddition"\s*:\s*"([^"]+)"/);
     return m2 ? m2[1] : null;
+  }
+
+  function extractIs24Object(): unknown {
+    // Look for window.is24 = {...}; in script tags
+    for (const s of Array.from(document.scripts)) {
+      const txt = s.textContent || '';
+      const match = txt.match(/window\.is24\s*=\s*(\{[\s\S]*?\});/);
+      if (match && match[1]) {
+        try {
+          return JSON.parse(match[1]);
+        } catch {
+          // Try without the trailing semicolon in case parsing failed
+          continue;
+        }
+      }
+    }
+    return null;
   }
 
   async function copyToClipboard(text: string): Promise<boolean> {
@@ -160,7 +178,7 @@ const FEEDBACK_MESSAGE_DURATION = 1500;
     return `https://earth.google.com/web/search/${q}`;
   }
 
-  function createOverlay(address: Address) {
+  function createOverlay(address: Address, metadata?: ReturnType<typeof extractMetadata>) {
     const { theme, position, mapProvider, showEarth } = settings;
     const style = overlayBaseStyle(theme, position);
     const btn = buttonStyle(theme);
@@ -187,6 +205,28 @@ const FEEDBACK_MESSAGE_DURATION = 1500;
       (district ? `\n(${district})` : '');
 
     line.textContent = addrLine || t('uiNoAddress');
+
+    // Add metadata section if available
+    const metadataDiv = document.createElement('div');
+    if (metadata && (metadata.publishedAt || metadata.lastModifiedAt)) {
+      metadataDiv.style.margin = '10px 0 10px';
+      metadataDiv.style.fontSize = '12px';
+      metadataDiv.style.opacity = '0.85';
+
+      if (metadata.publishedAt) {
+        const publishedLine = document.createElement('div');
+        publishedLine.style.margin = '2px 0';
+        publishedLine.textContent = `📅 ${t('uiPublished')}: ${metadata.publishedAt}`;
+        metadataDiv.appendChild(publishedLine);
+      }
+
+      if (metadata.lastModifiedAt) {
+        const modifiedLine = document.createElement('div');
+        modifiedLine.style.margin = '2px 0';
+        modifiedLine.textContent = `🔄 ${t('uiModified')}: ${metadata.lastModifiedAt}`;
+        metadataDiv.appendChild(modifiedLine);
+      }
+    }
 
     const actions = document.createElement('div');
     actions.style.display = 'flex';
@@ -220,7 +260,11 @@ const FEEDBACK_MESSAGE_DURATION = 1500;
     });
 
     actions.append(copyBtn, mapBtn, closeBtn);
-    div.append(title, line, actions);
+    div.append(title, line);
+    if (metadataDiv.children.length > 0) {
+      div.appendChild(metadataDiv);
+    }
+    div.appendChild(actions);
 
     if (showEarth) {
       const earthCornerBtn = document.createElement('a');
@@ -281,10 +325,10 @@ const FEEDBACK_MESSAGE_DURATION = 1500;
   function runDecoderOnce() {
     if (overlayState === 'dismissed') return;
     if (overlayEl) return;
-    
+
     const enc = extractEncodedFromScripts();
     if (!enc) return;
-    
+
     const address = decodeAddress(enc);
     if (!address) return;
 
@@ -294,8 +338,12 @@ const FEEDBACK_MESSAGE_DURATION = 1500;
         .join(' ');
       copyToClipboard(addressParts);
     }
-    
-    createOverlay(address);
+
+    // Extract metadata from window.is24
+    const is24 = extractIs24Object();
+    const metadata = is24 ? extractMetadata(is24) : undefined;
+
+    createOverlay(address, metadata);
     showOverlay();
   }
 

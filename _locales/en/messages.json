@@ -13,6 +13,8 @@
   "uiOpenEarth": { "message": "Open Google Earth" },
   "uiClose": { "message": "Close" },
   "uiNoAddress": { "message": "No address found" },
+  "uiPublished": { "message": "Published" },
+  "uiModified": { "message": "Modified" },
 
   "optTitle": { "message": "IS24 Address Finder – Options" },
   "optLegendMap": { "message": "Map" },
