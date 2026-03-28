@@ -13,16 +13,6 @@ immo24-address-finder/
 │       └── tests/
 │           └── decoder.test.ts
 ├── src/                                - Browser extension
-│   ├── adapters/
-│   │   └── browser-api.ts             - Cross-browser API abstraction
-│   ├── builders/
-│   │   └── overlay-builder.ts         - Overlay builder (currently unused in build)
-│   ├── commands/
-│   │   └── user-commands.ts           - Command pattern (currently unused in build)
-│   ├── factories/
-│   │   └── overlay-factory.ts         - Style factory (currently unused in build)
-│   ├── services/
-│   │   └── settings-manager.ts        - Settings service (currently unused in build)
 │   ├── bg.ts                          - Background service worker
 │   ├── content.ts                     - Main content script
 │   ├── options.ts                     - Options page
