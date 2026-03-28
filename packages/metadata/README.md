@@ -4,9 +4,7 @@
 [![Tests](https://github.com/kidzki/immo24-address-finder/actions/workflows/publish-metadata.yml/badge.svg)](https://github.com/kidzki/immo24-address-finder/actions/workflows/publish-metadata.yml)
 [![License](https://img.shields.io/npm/l/@immo24/metadata)](./LICENSE)
 
-Extracts structured metadata from ImmoScout24 listing pages.
-
-ImmoScout24 builds `window.IS24` incrementally across ~17 script tags using individual property assignments and JS object literals — not a single JSON block. This package parses those script tags and extracts a fully typed `ExposeMetadata` object containing price, location, contact, property details, gallery, and descriptions.
+Extracts structured metadata from ImmoScout24 listing pages into a fully typed `ExposeMetadata` object containing price, location, contact, property details, gallery, and descriptions.
 
 ## Installation
 
@@ -16,7 +14,9 @@ npm install @immo24/metadata
 
 ## Usage
 
-### In a browser / content script
+### In a browser extension or userscript
+
+Call `parseIS24FromScripts` with the current page document. It reads the page and returns the parsed IS24 data, which you then pass to `extractMetadata`:
 
 ```typescript
 import { parseIS24FromScripts, extractMetadata } from '@immo24/metadata';
@@ -33,9 +33,9 @@ console.log(metadata.location.city);     // "Köln"
 console.log(metadata.contact.lastName);  // "Busch"
 ```
 
-### From a pre-parsed IS24 object
+### From the IS24 object directly
 
-If you already have the `window.IS24` object (e.g. injected from a page script), you can skip the parser:
+If your execution context has direct access to `window.IS24` (e.g. a page script rather than an isolated content script), you can skip the parser:
 
 ```typescript
 import { extractMetadata } from '@immo24/metadata';
@@ -47,7 +47,7 @@ const metadata = extractMetadata(window.IS24);
 
 ### `parseIS24FromScripts(doc: Document): unknown`
 
-Reads all `<script>` tags in `doc`, extracts individual IS24 property assignments and sub-objects, and returns a reconstructed IS24 object. Returns `null` if no IS24 data is found.
+Reads the page document and returns the parsed IS24 data object. Returns `null` if no IS24 data is found.
 
 ### `extractMetadata(is24: unknown): ExposeMetadata`
 
@@ -65,17 +65,17 @@ Formats an ISO 8601 date string to `DD.MM.YYYY`. Returns `null` for invalid or m
 interface ExposeMetadata {
   exposeId: string | null;
   title: string | null;
-  publishedAt: string | null;       // DD.MM.YYYY
-  lastModifiedAt: string | null;    // DD.MM.YYYY
-  realEstateType: string | null;    // e.g. "APARTMENT_BUY"
+  publishedAt: string | null;           // DD.MM.YYYY
+  lastModifiedAt: string | null;        // DD.MM.YYYY
+  realEstateType: string | null;        // e.g. "APARTMENT_BUY", "HOUSE_BUY", "APARTMENT_RENT"
   commercializationType: string | null; // "BUY" | "RENT"
-  onTopProduct: string | null;      // e.g. "XXL"
+  onTopProduct: string | null;          // IS24 listing tier: "GOLD" | "PLUS" | "XXL" | null
   price: PriceInfo;
   location: LocationAddress;
   contact: ContactPerson;
   property: PropertyDetails;
   gallery: Gallery;
-  descriptions: Record<string, string>;
+  descriptions: Descriptions;
 }
 ```
 
@@ -92,15 +92,17 @@ interface PriceInfo {
 
 ### `LocationAddress`
 
+`isFullAddress` indicates whether the full street address (including house number) is publicly visible on the listing, as opposed to only a rough area.
+
 ```typescript
 interface LocationAddress {
   street: string | null;
   houseNumber: string | null;
   zip: string | null;
   city: string | null;
-  quarter: string | null;
-  region: string | null;
-  isFullAddress: boolean;
+  quarter: string | null;           // neighbourhood/district within the city
+  region: string | null;            // federal state, e.g. "Nordrhein-Westfalen"
+  isFullAddress: boolean;           // true if exact street + house number are disclosed
   geo: GeoLocation | null;
 }
 
@@ -120,8 +122,8 @@ interface ContactPerson {
   company: string | null;
   phone: string | null;
   cellPhone: string | null;
-  isCommercial: boolean;
-  isVerified: boolean;
+  isCommercial: boolean;            // true if listed by a real estate agency
+  isVerified: boolean;              // true if the realtor is IS24-verified
 }
 ```
 
@@ -131,9 +133,9 @@ interface ContactPerson {
 interface PropertyDetails {
   squareMeters: number | null;
   numberOfRooms: number | null;
-  floor: string | null;
+  floor: string | null;             // e.g. "2" (floor number as string)
   constructionYear: number | null;
-  features: string[];               // e.g. ["balcony", "cellar"]
+  features: string[];               // e.g. ["balcony", "cellar", "guestToilet"]
 }
 ```
 
@@ -143,7 +145,7 @@ interface PropertyDetails {
 interface Gallery {
   images: GalleryImage[];
   documents: GalleryDocument[];
-  imageCount: number;
+  imageCount: number;               // total count including images not in the images array
   hasFloorplan: boolean;
 }
 
@@ -160,29 +162,19 @@ interface GalleryDocument {
 }
 ```
 
-## How it works
+### `Descriptions`
 
-IS24 builds `window.IS24` incrementally via ~17 script tags:
+Text content fields from the listing. Only keys that are present on the listing are included — always check for existence before accessing.
 
-```js
-// Script 1 — individual assignments
-window.IS24 = window.IS24 || {};
-IS24.expose = IS24.expose || {};
-IS24.expose.id = 166173168;
-IS24.expose.lastModificationDate = "2026-03-25T17:58:18.399Z";
-IS24.expose.locationAddress = { "street": "Musterstraße", ... };
-
-// Script 6 — JS object literal (unquoted keys, not valid JSON)
-IS24.premiumStatsWidget = {
-  exposeOnlineSince: "2026-03-08T20:51:51.000+01:00",
-  layout: "DEFAULT"
-};
+```typescript
+interface Descriptions {
+  objectDescription?: string;       // main description of the property
+  locationDescription?: string;     // description of the surrounding area
+  furnishingDescription?: string;   // details about fixtures and fittings
+  otherDescription?: string;        // additional notes from the seller
+  aiSummary?: string;               // AI-generated summary (if available)
+}
 ```
-
-The parser handles:
-- **Individual string/number/boolean assignments** via targeted regex
-- **JSON sub-objects** via brace-counting (handles nested objects and strings correctly)
-- **JS object literals with unquoted keys** via field-specific regex extraction
 
 ## Requirements
 
