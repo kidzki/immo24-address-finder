@@ -24,9 +24,21 @@
     "immobilienscout24",
     "immo24",
     "metadata",
-    "real-estate"
+    "real-estate",
+    "scraping",
+    "browser-extension"
   ],
+  "author": "Michael Kick",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/kidzki/immo24-address-decoder.git",
+    "directory": "packages/metadata"
+  },
+  "homepage": "https://github.com/kidzki/immo24-address-decoder#readme",
+  "bugs": {
+    "url": "https://github.com/kidzki/immo24-address-decoder/issues"
+  },
   "engines": {
     "node": ">=16"
   },

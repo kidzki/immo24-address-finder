@@ -66,6 +66,29 @@ function extractStringValue(allText: string, property: string): string | null {
 }
 
 /**
+ * Extract a plain number value for `IS24.<property> = 123` assignments.
+ */
+function extractNumberValue(allText: string, property: string): number | null {
+  const escaped = property.replace(/\./g, '\\.').replace(/[[\]]/g, '\\$&');
+  const re = new RegExp(`(?:window\\.)?IS24\\.${escaped}\\s*=\\s*(-?\\d+(?:\\.\\d+)?)`);
+  const m = re.exec(allText);
+  if (!m) return null;
+  const n = Number(m[1]);
+  return isNaN(n) ? null : n;
+}
+
+/**
+ * Extract a boolean value for `IS24.<property> = true/false` assignments.
+ */
+function extractBooleanValue(allText: string, property: string): boolean | null {
+  const escaped = property.replace(/\./g, '\\.').replace(/[[\]]/g, '\\$&');
+  const re = new RegExp(`(?:window\\.)?IS24\\.${escaped}\\s*=\\s*(true|false)`);
+  const m = re.exec(allText);
+  if (!m) return null;
+  return m[1] === 'true';
+}
+
+/**
  * Parse the IS24 metadata from the page's script tags.
  *
  * IS24 builds the window.IS24 object incrementally across many script tags
@@ -78,7 +101,7 @@ function extractStringValue(allText: string, property: string): string | null {
  */
 export function parseIS24FromScripts(doc: Document): unknown {
   const allText = Array.from(doc.scripts)
-    .map(s => s.textContent || '')
+    .map((s: HTMLScriptElement) => s.textContent || '')
     .join('\n');
 
   if (!allText.includes('IS24')) return null;
@@ -90,22 +113,63 @@ export function parseIS24FromScripts(doc: Document): unknown {
 
   const contactLayerModel = extractSubObject(allText, 'contactLayerModel');
 
-  // Extract expose — try as a single object first, otherwise build from parts
+  // Build the expose object from individual assignments.
+  // IS24 sets expose properties as separate assignments like:
+  //   IS24.expose.id = 166173168;
+  //   IS24.expose.purchasePrice = "829000";
+  //   IS24.expose.locationAddress = {...};
   let expose = extractSubObject(allText, 'expose') as Record<string, unknown> | null;
   if (!expose || typeof expose !== 'object') expose = {};
 
-  // Some expose properties are set as nested assignments after the main object.
-  // Fill in what's missing from the compose object.
-  const quickCheckConfig = extractSubObject(allText, 'expose.quickCheckConfig');
-  if (quickCheckConfig && !expose.quickCheckConfig) expose.quickCheckConfig = quickCheckConfig;
+  // Scalar string fields
+  const strFields: Array<[string, string]> = [
+    ['purchasePrice', 'expose.purchasePrice'],
+    ['propertyPrice', 'expose.propertyPrice'],
+    ['totalRent', 'expose.totalRent'],
+    ['baseRent', 'expose.baseRent'],
+    ['commercializationType', 'expose.commercializationType'],
+    ['realEstateType', 'expose.realEstateType'],
+    ['onTopProduct', 'expose.onTopProduct'],
+    ['lastModificationDate', 'expose.lastModificationDate'],
+    ['lastModificationDate', 'lastModificationDate'], // fallback without prefix
+  ];
+  for (const [key, path] of strFields) {
+    if (!expose[key]) {
+      const val = extractStringValue(allText, path);
+      if (val) expose[key] = val;
+    }
+  }
 
-  const mediaAvailabilityModel = extractSubObject(allText, 'expose.mediaAvailabilityModel');
-  if (mediaAvailabilityModel && !expose.mediaAvailabilityModel) expose.mediaAvailabilityModel = mediaAvailabilityModel;
+  // Scalar number fields
+  if (!expose.id) {
+    const id = extractNumberValue(allText, 'expose.id');
+    if (id !== null) expose.id = id;
+  }
 
-  // lastModificationDate may be a plain string assignment, not an object
-  if (!expose.lastModificationDate) {
-    const lastMod = extractStringValue(allText, 'lastModificationDate');
-    if (lastMod) expose.lastModificationDate = lastMod;
+  // Scalar boolean fields
+  if (expose.isVerifiedRealtor === undefined) {
+    const val = extractBooleanValue(allText, 'expose.isVerifiedRealtor');
+    if (val !== null) expose.isVerifiedRealtor = val;
+  }
+  if (expose.isCommercialRealtor === undefined) {
+    const val = extractBooleanValue(allText, 'expose.isCommercialRealtor');
+    if (val !== null) expose.isCommercialRealtor = val;
+  }
+
+  // Sub-object fields set as nested assignments
+  const subObjFields: Array<[string, string]> = [
+    ['locationAddress', 'expose.locationAddress'],
+    ['contactData', 'expose.contactData'],
+    ['availableServicesData', 'expose.availableServicesData'],
+    ['galleryData', 'expose.galleryData'],
+    ['quickCheckConfig', 'expose.quickCheckConfig'],
+    ['mediaAvailabilityModel', 'expose.mediaAvailabilityModel'],
+  ];
+  for (const [key, path] of subObjFields) {
+    if (!expose[key]) {
+      const val = extractSubObject(allText, path);
+      if (val) expose[key] = val;
+    }
   }
 
   // Extract SSR model — only the pieces we need to avoid huge parse work
