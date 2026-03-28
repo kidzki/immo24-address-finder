@@ -13,6 +13,7 @@ const FEEDBACK_MESSAGE_DURATION = 1500;
   const DEFAULTS: Settings = {
     mapProvider: 'google',
     autoCopy: false,
+    showEarth: true,
     position: 'bottom-right',
     theme: 'dark',
     localeOverride: 'auto'
@@ -137,10 +138,13 @@ const FEEDBACK_MESSAGE_DURATION = 1500;
       background: transparent; color: ${text}; font-weight: 600;
     `;
   }
-function closeButtonStyle(theme: Settings['theme']) {
+  function earthCornerStyle(theme: Settings['theme']) {
+    const border = (theme === 'light') ? 'rgba(17,24,39,.2)' : 'rgba(255,255,255,.2)';
     return `
-      position: absolute; top: 8px; right: 8px; width: 24px; height: 24px; border: none; background: transparent;
-      color: ${theme === 'light' ? '#111827' : '#fff'}; font-size: 18px; line-height: 1; cursor: pointer;
+      position: absolute; top: 6px; right: 8px; width: 24px; height: 24px;
+      border: 1px solid ${border}; border-radius: 6px; background: transparent;
+      font-size: 14px; line-height: 1; cursor: pointer; text-decoration: none;
+      display: inline-flex; align-items: center; justify-content: center;
     `;
   }
 
@@ -157,11 +161,10 @@ function closeButtonStyle(theme: Settings['theme']) {
   }
 
   function createOverlay(address: Address) {
-    const { theme, position, mapProvider } = settings;
+    const { theme, position, mapProvider, showEarth } = settings;
     const style = overlayBaseStyle(theme, position);
     const btn = buttonStyle(theme);
     const ghost = ghostStyle(theme);
-    const close = closeButtonStyle(theme);
 
     const div = document.createElement('div');
     div.id = 'is24-address-decoder-overlay';
@@ -208,23 +211,27 @@ function closeButtonStyle(theme: Settings['theme']) {
     mapBtn.rel = 'noopener';
     mapBtn.textContent = t('uiOpenMap');
 
-    const earthBtn = document.createElement('a');
-    earthBtn.setAttribute('style', ghost + ' text-decoration:none; display:inline-flex; align-items:center; justify-content:center;')
-    earthBtn.href = buildEarthHref([street, houseNumber, postalCode, city]);
-    earthBtn.target = '_blank';
-    earthBtn.rel = 'noopener';
-    earthBtn.textContent = t('uiOpenEarth');
-
     const closeBtn = document.createElement('button');
-    closeBtn.setAttribute('style', close);
-    closeBtn.textContent = 'X';
+    closeBtn.setAttribute('style', ghost);
+    closeBtn.textContent = t('uiClose');
     closeBtn.addEventListener('click', () => {
       overlayState = 'dismissed';
       hideOverlay();
     });
 
-    actions.append(copyBtn, mapBtn, earthBtn);
-    div.append(closeBtn, title, line, actions);
+    actions.append(copyBtn, mapBtn, closeBtn);
+    div.append(title, line, actions);
+
+    if (showEarth) {
+      const earthCornerBtn = document.createElement('a');
+      earthCornerBtn.setAttribute('style', earthCornerStyle(theme));
+      earthCornerBtn.href = buildEarthHref([street, houseNumber, postalCode, city]);
+      earthCornerBtn.target = '_blank';
+      earthCornerBtn.rel = 'noopener';
+      earthCornerBtn.title = t('uiOpenEarth');
+      earthCornerBtn.textContent = '🌍';
+      div.appendChild(earthCornerBtn);
+    }
     document.documentElement.appendChild(div);
 
     overlayEl = div;
