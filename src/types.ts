@@ -11,6 +11,7 @@ export interface Settings {
   mapProvider: MapProvider;
   autoCopy: boolean;
   showEarth: boolean;
+  showDates: boolean;
   position: Position;
   theme: Theme;
   localeOverride: LocaleOverride;

@@ -23,6 +23,7 @@
   "optTheme": { "message": "Tema:" },
   "optAutoCopy": { "message": "Copiar automáticamente la dirección al portapapeles al detectarla" },
   "optShowEarth": { "message": "Mostrar botón de Google Earth en el overlay" },
+  "optShowDates": { "message": "Mostrar fechas de publicación y modificación en el overlay" },
   "optSave": { "message": "Guardar" },
   "optSaved": { "message": "Guardado ✓" },
 

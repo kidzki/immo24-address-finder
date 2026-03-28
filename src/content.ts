@@ -16,6 +16,7 @@ const FEEDBACK_MESSAGE_DURATION = 1500;
     mapProvider: 'google',
     autoCopy: false,
     showEarth: true,
+    showDates: true,
     position: 'bottom-right',
     theme: 'dark',
     localeOverride: 'auto'
@@ -167,7 +168,7 @@ const FEEDBACK_MESSAGE_DURATION = 1500;
   }
 
   function createOverlay(address: Address | null, metadata?: ExposeMetadata) {
-    const { theme, position, mapProvider, showEarth } = settings;
+    const { theme, position, mapProvider, showEarth, showDates } = settings;
     const style = overlayBaseStyle(theme, position);
     const btn = buttonStyle(theme);
     const ghost = ghostStyle(theme);
@@ -201,7 +202,7 @@ const FEEDBACK_MESSAGE_DURATION = 1500;
 
     // Metadata section
     const metadataDiv = document.createElement('div');
-    if (metadata && (metadata.publishedAt || metadata.lastModifiedAt)) {
+    if (showDates && metadata && (metadata.publishedAt || metadata.lastModifiedAt)) {
       metadataDiv.style.margin = address ? '0 0 10px' : '6px 0 10px';
       metadataDiv.style.fontSize = '12px';
       metadataDiv.style.opacity = '0.85';
@@ -334,7 +335,7 @@ const FEEDBACK_MESSAGE_DURATION = 1500;
     const metadata = is24 ? extractMetadata(is24) : undefined;
 
     // Nothing to show at all
-    const hasDates = metadata && (metadata.publishedAt || metadata.lastModifiedAt);
+    const hasDates = settings.showDates && metadata && (metadata.publishedAt || metadata.lastModifiedAt);
     if (!address && !hasDates) return;
 
     if (address && settings.autoCopy) {

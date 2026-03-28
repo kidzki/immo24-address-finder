@@ -9,6 +9,7 @@ const DEFAULTS: Settings = {
   mapProvider: 'google',
   autoCopy: false,
   showEarth: true,
+  showDates: true,
   position: 'bottom-right',
   theme: 'dark',
   localeOverride: 'auto'
@@ -87,6 +88,7 @@ const form = document.getElementById('form') as (HTMLFormElement & {
   mapProvider: HTMLSelectElement;
   autoCopy: HTMLInputElement;
   showEarth: HTMLInputElement;
+  showDates: HTMLInputElement;
   position: HTMLSelectElement;
   theme: HTMLSelectElement;
   localeOverride?: HTMLSelectElement;
@@ -104,6 +106,7 @@ function load() {
       form.mapProvider.value = items.mapProvider;
       form.autoCopy.checked = !!items.autoCopy;
       form.showEarth.checked = !!items.showEarth;
+      form.showDates.checked = items.showDates !== false;
       form.position.value = items.position;
       form.theme.value = items.theme;
       if ((form as any).localeOverride) {
@@ -119,6 +122,7 @@ function load() {
   form.mapProvider.value = DEFAULTS.mapProvider;
   form.autoCopy.checked = DEFAULTS.autoCopy;
   form.showEarth.checked = DEFAULTS.showEarth;
+  form.showDates.checked = DEFAULTS.showDates;
   form.position.value = DEFAULTS.position;
   form.theme.value = DEFAULTS.theme;
   if ((form as any).localeOverride) {
@@ -148,6 +152,7 @@ form?.addEventListener('submit', (e) => {
     mapProvider: form.mapProvider.value as MapProvider,
     autoCopy: form.autoCopy.checked,
     showEarth: form.showEarth.checked,
+    showDates: form.showDates.checked,
     position: form.position.value as Position,
     theme: form.theme.value as Theme,
     localeOverride: newLocale

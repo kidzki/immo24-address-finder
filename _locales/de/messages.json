@@ -27,6 +27,7 @@
     "message": "Adresse nach Erkennung automatisch in die Zwischenablage kopieren"
   },
   "optShowEarth": { "message": "Google Earth-Button im Overlay anzeigen" },
+  "optShowDates": { "message": "Erstellungs- und Änderungsdatum im Overlay anzeigen" },
   "optSave": { "message": "Speichern" },
   "optSaved": { "message": "Gespeichert ✓" },
 

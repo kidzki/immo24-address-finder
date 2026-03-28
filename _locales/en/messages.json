@@ -27,6 +27,7 @@
     "message": "Automatically copy address to clipboard after detection"
   },
   "optShowEarth": { "message": "Show Google Earth button in overlay" },
+  "optShowDates": { "message": "Show published and modified dates in overlay" },
   "optSave": { "message": "Save" },
   "optSaved": { "message": "Saved ✓" },
 
