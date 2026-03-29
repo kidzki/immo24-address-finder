@@ -164,17 +164,13 @@ interface GalleryDocument {
 
 ### `Descriptions`
 
-Text content fields from the listing. Only keys that are present on the listing are included — always check for existence before accessing.
+Text content fields from the listing as a plain key-value map. Only keys present on the listing are included — always check for existence before accessing.
 
 ```typescript
-interface Descriptions {
-  objectDescription?: string;       // main description of the property
-  locationDescription?: string;     // description of the surrounding area
-  furnishingDescription?: string;   // details about fixtures and fittings
-  otherDescription?: string;        // additional notes from the seller
-  aiSummary?: string;               // AI-generated summary (if available)
-}
+type Descriptions = Record<string, string>;
 ```
+
+Common keys: `objectDescription`, `locationDescription`, `furnishingDescription`, `otherDescription`, `aiSummary`.
 
 ## Requirements
 
