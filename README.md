@@ -15,11 +15,18 @@ A simple browser extension for Chrome/Chromium and Firefox that decodes hidden a
 
 ## ✨ Features
 
-- Works on ImmobilienScout24 expose pages (`https://www.immobilienscout24.de/expose/*`)
-- Overlay toggle via **Ctrl+B** / **⌘+B**
+- Decodes hidden address information on ImmobilienScout24 expose pages
+- Shows listing **publication and last-modified dates** in the overlay
+- Overlay visible even when address is not yet available (metadata-only mode)
+- **Google Earth** button to open the address directly in Google Earth (🌍)
+- One-click **copy to clipboard**
+- Opens address in **Google Maps**, **OpenStreetMap**, or **Apple Maps**
+- Toggle overlay via **Ctrl+B** / **⌘+B** or automatically on page load
+- **Auto-copy** mode: copies address to clipboard automatically
 - Supports multiple languages: **German**, **English**, **Spanish**, **Italian**
-- Options page with language selection, repo link, and version display
-- Minimalistic extension icon in ImmoScout24 colors
+- Language switches **instantly** without page reload
+- Configurable overlay **position** (4 corners), **theme** (dark/light)
+- Options to show/hide the Earth button and date fields
 - Separate builds for **Chromium (MV3)** and **Firefox (MV2)**
 
 ## 🛠️ Development
