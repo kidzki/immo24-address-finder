@@ -2,6 +2,7 @@
   "name": "immo24-address-decoder",
   "version": "0.3.0",
   "private": false,
+  "license": "CC-BY-NC-SA-4.0",
   "type": "module",
   "workspaces": [
     "packages/*"
