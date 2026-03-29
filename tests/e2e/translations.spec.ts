@@ -133,8 +133,9 @@ test.describe('Locale Bundle Loading', () => {
 test.describe('Locale Completeness', () => {
   const requiredKeys = [
     'extName', 'extDesc', 'cmdToggle',
-    'uiTitle', 'uiCopy', 'uiCopied', 'uiCopyFail', 'uiOpenMap', 'uiOpenEarth', 'uiClose', 'uiNoAddress',
-    'optTitle', 'optLegendMap', 'optLegendOverlay', 'optMapProvider', 'optPosition', 'optTheme', 'optAutoCopy', 'optShowEarth',
+    'uiTitle', 'uiTitleNoAddress', 'uiCopy', 'uiCopied', 'uiCopyFail', 'uiOpenMap', 'uiOpenEarth', 'uiClose', 'uiNoAddress',
+    'uiPublished', 'uiModified',
+    'optTitle', 'optLegendMap', 'optLegendOverlay', 'optMapProvider', 'optPosition', 'optTheme', 'optAutoCopy', 'optShowEarth', 'optShowDates',
     'optSave', 'optSaved',
     'optGoogle', 'optOsm', 'optApple',
     'posBR', 'posBL', 'posTR', 'posTL',
@@ -152,7 +153,7 @@ test.describe('Locale Completeness', () => {
       expect(locale).toHaveProperty(key);
     }
     
-    expect(Object.keys(locale).length).toBe(41);
+    expect(Object.keys(locale).length).toBe(45);
   });
 
   test('English locale should have all required keys', async ({ page }) => {
@@ -164,7 +165,7 @@ test.describe('Locale Completeness', () => {
       expect(locale[key].message).toBeTruthy();
     }
 
-    expect(Object.keys(locale).length).toBe(41);
+    expect(Object.keys(locale).length).toBe(45);
   });
 
   test('Spanish locale should have all required keys', async ({ page }) => {
@@ -176,7 +177,7 @@ test.describe('Locale Completeness', () => {
       expect(locale[key].message).toBeTruthy();
     }
 
-    expect(Object.keys(locale).length).toBe(41);
+    expect(Object.keys(locale).length).toBe(45);
   });
 
   test('Italian locale should have all required keys', async ({ page }) => {
@@ -188,7 +189,7 @@ test.describe('Locale Completeness', () => {
       expect(locale[key].message).toBeTruthy();
     }
 
-    expect(Object.keys(locale).length).toBe(41);
+    expect(Object.keys(locale).length).toBe(45);
   });
 });
 
