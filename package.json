@@ -2,7 +2,17 @@
   "name": "immo24-address-decoder",
   "version": "0.3.0",
   "private": false,
+  "description": "Browser extension for Chrome and Firefox that decodes hidden address information on ImmobilienScout24 listings",
+  "author": "Michael Kick",
   "license": "CC-BY-NC-SA-4.0",
+  "homepage": "https://github.com/kidzki/immo24-address-finder#readme",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/kidzki/immo24-address-finder.git"
+  },
+  "bugs": {
+    "url": "https://github.com/kidzki/immo24-address-finder/issues"
+  },
   "type": "module",
   "workspaces": [
     "packages/*"
