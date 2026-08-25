@@ -1,21 +1,26 @@
-# Analytics archive (Chrome Web Store)
+# Analytics archive
 
 A closing snapshot of what the IS24 Address Finder extension reached during its
-active life, kept here because the store listing is being withdrawn.
+active life, kept here because both store listings are being withdrawn. Covers
+the Chrome Web Store and the Firefox add-on (AMO).
 
-Source: Chrome Web Store Developer Dashboard exports plus the public store page,
-captured on 2026-08-25. Raw CSVs are next to this file.
+Captured on 2026-08-25.
 
 ## Data files
+
+Chrome Web Store (Developer Dashboard CSV exports, range 2025-08-24 to 2026-08-23):
 
 - `weekly-users.csv` — weekly active users per day
 - `installations.csv` — installations per day
 - `installations-by-region.csv` — installations per day, split by country
 - `store-page-views.csv` — store listing page views (impressions) per day
 
-Export range: 2025-08-24 to 2026-08-23 (365 days).
+Firefox / AMO (no CSV export available, transcribed from the dashboard):
 
-## Highlights
+- `firefox-amo.md` — transcribed stats
+- `firefox-amo-2026-08-25.png` — dashboard screenshot (source of truth)
+
+## Highlights (Chrome Web Store)
 
 - **Peak / final weekly active users: 864** (2026-08-23, the last day in the export).
 - **First installs: 2025-09-24** (first non-zero day; the extension launched in
@@ -26,6 +31,15 @@ Export range: 2025-08-24 to 2026-08-23 (365 days).
   single digits).
 - **Store page views: ~3,310 total** over the year, busiest day 149 views (2026-04-06).
 - **Store rating: 5.0 from 4 reviews** (public store page, 2026-08-25).
+
+## Highlights (Firefox / AMO)
+
+- **Average daily users: 48** over the last 365 days (recent daily-users figure: 92).
+- **Peak daily users: 116** (2026-08-18).
+- **192 downloads** in the last 365 days (5 per week at the end).
+- Platforms: Windows 68%, Mac 18%, Linux 14%. Languages: German 79%, English 19%.
+
+Details in `firefox-amo.md`.
 
 ## Context
 
