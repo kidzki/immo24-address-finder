@@ -53,14 +53,22 @@ A simple browser extension for Chrome/Chromium and Firefox that decodes hidden a
 
 At the point of archiving, over roughly one year (2025-08-24 to 2026-08-23):
 
+**Chrome Web Store**
+
 - **~864** weekly active users at peak
 - **~1,453** installations total (~68% Germany, ~26% USA)
 - **~3,310** store page views
 - **5.0** rating from 4 reviews
 
-Full data and CSV exports: [`docs/analytics/`](docs/analytics/).
+**Firefox add-on (AMO)**
 
-_Figures compiled from Chrome Web Store dashboard exports (AI-assisted, 2026-08-25); the raw CSVs are the source of truth and were not independently audited._
+- **~48** average daily users (peak **116** on 2026-08-18)
+- **192** downloads over the year
+- Windows 68% / Mac 18% / Linux 14%, German 79% / English 19%
+
+Full data and exports: [`docs/analytics/`](docs/analytics/).
+
+_Figures compiled from Chrome Web Store dashboard exports and the Firefox/AMO dashboard (AI-assisted, 2026-08-25); the raw CSVs and the AMO screenshot are the source of truth and were not independently audited._
 
 ## ✨ Features
 
