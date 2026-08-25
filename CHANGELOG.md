@@ -5,6 +5,26 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased] - 2026-08-25
+
+### ⚠️ Deprecated / Archived
+
+- **Project archived. The extension no longer works.** ImmobilienScout24 removed
+  the `obj_telekomInternetUrlAddition` field that carried the hidden address as a
+  base64 string, and with it the only client-side path to the address. For hidden
+  listings the street and house number are now stripped server-side and are not
+  present in the page in any form, nor fetched by any request. The only geodata
+  left is a randomly offset map coordinate (measured 130 m to 320 m off the true
+  building), which cannot recover the address.
+- A "probable area" circle around the fuzzed coordinate was considered and
+  rejected (insufficient ground-truth data to set an honest radius; a different
+  product).
+- Full investigation: `docs/INVESTIGATION-2026-08.md`.
+
+_This entry summarizes an AI-assisted investigation (Claude Code) on 2026-08-25.
+Findings were checked against live pages; the coordinate-offset measurement rests
+on two verified address pairs and is a small sample._
+
 ## [0.3.0] - 2026-03-29
 
 ### ✨ Features

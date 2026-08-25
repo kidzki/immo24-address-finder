@@ -6,10 +6,46 @@
 
 [![Uses Bun](https://img.shields.io/badge/Uses-Bun-000000?logo=bun&logoColor=white)](https://bun.sh)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.9-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
-[![Chrome Extension](https://img.shields.io/badge/Chrome-Extension-4285F4?logo=google-chrome&logoColor=white)](https://chrome.google.com/webstore/detail/IMMO24_EXTENSION_ID)
+[![Chrome Extension](https://img.shields.io/badge/Chrome-Extension-4285F4?logo=google-chrome&logoColor=white)](https://chromewebstore.google.com/detail/is24-address-finder/ambjabaakfapdjmkmnfbiafdfncegomp)
 [![Firefox Add-on](https://img.shields.io/badge/Firefox-Add--on-FF7139?logo=firefox-browser&logoColor=white)](https://addons.mozilla.org/firefox/addon/IMMO24_ADDON_SLUG)
 
 
+
+> ## ⚠️ Status: Defunct (archived 2026-08-25)
+>
+> **This extension no longer works and is no longer maintained.**
+>
+> Its core feature decoded the hidden address on ImmobilienScout24 listings from
+> the `obj_telekomInternetUrlAddition` field, which carried the full address as a
+> base64 string in the page source. ImmobilienScout24 removed that field sitewide.
+>
+> Short version of what was checked:
+>
+> - The encoded field is gone from every expose page (checked on ~130 listings
+>   across regions and categories).
+> - No decoder or address logic remains in the app bundles; the React app reads
+>   the address only from `IS24.expose.locationAddress`, which contains the street
+>   only when the listing already shows it publicly.
+> - For hidden listings the street and house number are stripped server-side and
+>   are not present in the page in any form (plain text, hex, or base64) and are
+>   not fetched by any network request.
+> - The only geodata left for a hidden listing is a map coordinate that is
+>   randomly offset from the true building (measured 130 m to 320 m off on two
+>   ground-truth cases), so it cannot be used to recover the address.
+> - The Telekom speedcheck link only carries the address when it is already
+>   public; for hidden listings it carries none.
+>
+> A "probable area" circle (drawing the maximum-offset radius around the fuzzed
+> coordinate) was considered and rejected: too little ground-truth data to set the
+> radius honestly, and it would be a different product.
+>
+> Full write-up: [`docs/INVESTIGATION-2026-08.md`](docs/INVESTIGATION-2026-08.md).
+>
+> If you installed it from the Chrome Web Store, you can remove it there.
+>
+> _This status came out of an AI-assisted investigation (Claude Code) on
+> 2026-08-25. Findings were checked against live pages; the coordinate-offset
+> measurement rests on two verified address pairs and is a small sample._
 
 A simple browser extension for Chrome/Chromium and Firefox that decodes hidden address information on ImmobilienScout24 listings and makes it visible.
 
