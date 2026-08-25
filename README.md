@@ -49,6 +49,19 @@
 
 A simple browser extension for Chrome/Chromium and Firefox that decodes hidden address information on ImmobilienScout24 listings and makes it visible.
 
+## 📊 Reach (final, 2026-08-25)
+
+At the point of archiving, over roughly one year (2025-08-24 to 2026-08-23):
+
+- **~864** weekly active users at peak
+- **~1,453** installations total (~68% Germany, ~26% USA)
+- **~3,310** store page views
+- **5.0** rating from 4 reviews
+
+Full data and CSV exports: [`docs/analytics/`](docs/analytics/).
+
+_Figures compiled from Chrome Web Store dashboard exports (AI-assisted, 2026-08-25); the raw CSVs are the source of truth and were not independently audited._
+
 ## ✨ Features
 
 - Decodes hidden address information on ImmobilienScout24 expose pages
